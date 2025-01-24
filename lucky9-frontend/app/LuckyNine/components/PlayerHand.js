@@ -8,6 +8,7 @@ import Image from "next/image";
 import PlayerCard from "@/app/components/PlayerHandCard";
 // Components
 const PlayerHand = ({
+  playerIndex,
   socket,
   currentPlayer,
   isPlayerCoin,
@@ -73,7 +74,7 @@ const PlayerHand = ({
     let positionIndex = index;
 
     if(index === 0 ){
-      positionIndex = index + 1;
+      positionIndex = index + playerIndex;
     }
 
     if (index > bankerIndex) {
