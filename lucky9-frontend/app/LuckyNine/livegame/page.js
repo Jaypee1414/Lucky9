@@ -233,7 +233,8 @@ export default function Game() {
       setHands(newGameState.hands)
       setScores(newGameState.scores)
       setBanker(newGameState.banker)
-      setGamePhase(newGameState.gamePhase)
+      // setGamePhase(newGameState.gamePhase)
+      setGamePhase("countdown")
     })
 
     newSocket.on("player-disconnected", (data) => {
@@ -280,7 +281,11 @@ export default function Game() {
 
   useEffect(() => {
     if (gamePhase === "countdown" && count > 0) {
-      const timer = setTimeout(() => setCount(count - 1), 1000)
+      const timer = setTimeout(() => {
+        setCount((prevCount) => {
+          return prevCount - 1
+        })
+      }, 1000)
       return () => clearTimeout(timer)
     } else if (gamePhase === "countdown" && count === 0) {
       setShowBetMessage(true)
@@ -312,7 +317,7 @@ export default function Game() {
       timer = setTimeout(() => {
         setShowResults(false)
         PlayAgainSameBanker()
-      }, 5000) 
+      }, 5000)
     }
     return () => clearTimeout(timer)
   }, [gamePhase])
@@ -340,7 +345,7 @@ export default function Game() {
 
   function PlayAgainSameBanker() {
     setGamePhase("countdown")
-    setCount(0)
+    setCount(3) 
     setHands({})
     setIsbet(0)
     setShowAllCards(false)
@@ -392,9 +397,14 @@ export default function Game() {
     )
   }
 
-  const isBankerIndex = players.indexOf(banker)
+  const isBankerIndex = players.indexOf(banker) // note check banker place always in middle
+  const playerIndex = gameState?.players.findIndex((p) => p.id === socket.id) // note get player index
+  const currentPlayer = gameState?.players.find((p) => p.id === socket.id) // note get the POV player
 
-  console.log(gameState)
+  console.log("check Players", gameState)
+  console.log("Player Index", playerIndex)
+  console.log("currentplayer", currentPlayer)
+  console.log("socketId", socket.id)
 
   return (
     <div className=" bg-[url('/image/GameBackground.svg')] bg-cover bg-center bg-no-repeat w-auto h-screen">
@@ -458,17 +468,21 @@ export default function Game() {
                 </motion.div>
               )}
               {showPlayerHands || gamePhase === "drawPhase" || gamePhase === "results" || gamePhase === "betting" ? (
-                <>
-                  {players.map((player, index) => (
+                <div key={socket.id}>
+                  {players?.map((player, index) => (
                     <PlayerHand
-                      isPlayerCoin={isPlayerCoin}
+                      gamestate={gameState}
+                      playerIndex={playerIndex} // note get the player index position
+                      socket={socket.id} // note check player socket id
+                      currentPlayer={gameState?.players[index]?.id} // note get the current player id
+                      isPlayerCoin={isPlayerCoin} // note fix player coin
                       isGood={isGood}
                       setIsGood={setIsGood}
                       gamePhase={gamePhase}
                       bet={isBet}
                       isBankerIndex={isBankerIndex}
                       index={index}
-                      key={player.id}
+                      key={index}
                       player={player}
                       hand={hands[player] || []}
                       score={scores[player] || 0}
@@ -486,7 +500,7 @@ export default function Game() {
                       isBot={player.startsWith("Bot")}
                     />
                   ))}
-                </>
+                </div>
               ) : null}
             </div>
 
@@ -503,13 +517,13 @@ export default function Game() {
                   transition={{ duration: 0.5 }}
                 >
                   <Card>
-                    <CardContent className="p-4">
+                    <CardContent className="p-4" key={socket.id}>
                       <h2 className="text-xl font-bold mb-2">Results</h2>
                       {(() => {
                         const results = determineResults(players, scores, banker)
-                        return players.map((player) => (
+                        return players.map((player, index) => (
                           <motion.div
-                            key={player.id}
+                            key={index}
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.3 }}

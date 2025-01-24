@@ -32,7 +32,29 @@ const shuffleDeck = (deck) => {
 }
 
 const calculateScore = (hand) => {
-  // ... (implement the calculateScore function as in the client-side code)
+  const totalScore = hand.reduce((total, card) => {
+    if (["J", "Q", "K"].includes(card.value)) {
+      return total // Face cards are worth 0 points
+    }
+
+    if (card.value === "10") {
+      return total // 10 is worth 0 points
+    }
+
+    if (card.value === "A") {
+      return total + 1 // Ace is worth 1 point
+    }
+
+    const cardValue = Number(card.value)
+    if (cardValue >= 2 && cardValue <= 9) {
+      return total + cardValue // Numeric cards (2-9) contribute their face value
+    }
+
+    return total
+  }, 0)
+
+  // Return the remainder when divided by 10
+  return totalScore % 10
 }
 
 io.on("connection", (socket) => {
@@ -84,17 +106,25 @@ io.on("connection", (socket) => {
   })
 
   socket.on("draw-card", ({ gameId, player }) => {
-    const game = games.get(gameId)
+    console.log(`Received draw-card event for player ${player} in game ${gameId}`);
+    const game = games.get(gameId);
     if (game && game.gamePhase === "drawPhase") {
-      const playerHand = game.hands[player] || []
+      console.log(`Game found, phase: ${game.gamePhase}`);
+      const playerHand = game.hands[player] || [];
+      console.log(`Player hand: ${JSON.stringify(playerHand)}, score: ${calculateScore(playerHand)}`);
       if (playerHand.length === 2 && calculateScore(playerHand) < 8) {
-        const card = game.deck.pop()
-        game.hands[player] = [...playerHand, card]
-        game.scores[player] = calculateScore(game.hands[player])
-        io.to(gameId).emit("game-state", sanitizeGameState(game))
+        const card = game.deck.pop();
+        game.hands[player] = [...playerHand, card];
+        game.scores[player] = calculateScore(game.hands[player]);
+        console.log(`Card drawn: ${JSON.stringify(card)}, new hand: ${JSON.stringify(game.hands[player])}`);
+        io.to(gameId).emit("game-state", sanitizeGameState(game));
+      } else {
+        console.log('Conditions for drawing a card not met');
       }
+    } else {
+      console.log('Game not found or not in draw phase');
     }
-  })
+  });
 
   socket.on("disconnect", () => {
     console.log(`${socket.id} disconnected`)
