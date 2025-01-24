@@ -7,8 +7,7 @@ function GameSelection({ value, bet, isBanker,gamePhase , setIsPlayerCoin,isPlay
     bet((prevBet) => Number(prevBet) + Number(playerbet));
     setIsPlayerCoin((prevCoin) => Number(prevCoin) - Number(playerbet))
   }
-
-  console.log(gamePhase)
+  
   return (
     <div className="absolute bottom-0 left-0">
       <div className={`flex flex-row ${isBanker ? "justify-end" : "justify-between" }  px-10 w-screen items-center relative space-x-7`}>

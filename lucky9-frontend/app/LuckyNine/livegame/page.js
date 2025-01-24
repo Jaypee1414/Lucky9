@@ -401,10 +401,6 @@ export default function Game() {
   const playerIndex = gameState?.players.findIndex((p) => p.id === socket.id) // note get player index
   const currentPlayer = gameState?.players.find((p) => p.id === socket.id) // note get the POV player
 
-  console.log("check Players", gameState)
-  console.log("Player Index", playerIndex)
-  console.log("currentplayer", currentPlayer)
-  console.log("socketId", socket.id)
 
   return (
     <div className=" bg-[url('/image/GameBackground.svg')] bg-cover bg-center bg-no-repeat w-auto h-screen">
