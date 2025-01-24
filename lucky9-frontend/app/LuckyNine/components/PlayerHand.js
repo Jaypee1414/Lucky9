@@ -1,0 +1,226 @@
+import React, { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Sparkles } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+import PlayerCard from "@/app/components/PlayerHandCard";
+// Components
+const PlayerHand = ({
+  isPlayerCoin,
+  isGood,
+  setIsGood,
+  gamePhase,
+  bet,
+  index,
+  player,
+  hand,
+  score,
+  isBankerIndex,
+  canDraw,
+  onDraw,
+  showCards,
+}) => {
+
+  // the main player
+  const playerBanker = isBankerIndex === 0;
+
+  // position for banker
+  const BankerPosition = playerBanker
+    ? "bottom-0 left-1/2 -translate-x-1/2 z-10"
+    : "top-14 left-1/2 -translate-x-1/2";
+
+  // Available position
+  const playerPositions = [
+    "right-3 top-1/2 -translate-y-1/2 z-10",
+    "right-72 top-36 -translate-y-1/2 z-10",
+    playerBanker
+      ? "top-20 left-1/2 -translate-x-1/2"
+      : "right-3 top-1/2 -translate-y-1/2 z-10",
+    "left-72 top-36 -translate-y-1/2 z-10",
+    "left-3 top-1/2 -translate-y-1/2 z-10",
+  ];
+
+  // position for banker bet Incase
+  const BetBankerPosition = "top-52 z-20";
+
+  // available bet position
+  const betPositions = [
+    "top-56 -translate-y-1/2 z-10",
+    "top-52 z-20",
+    "-left-32 bottom-0 z-20",
+    "top-52 z-20",
+    "-right-32 bottom-0 z-20",
+  ];
+
+  // Get the player position
+  const GetPositionPlayer = (index, bankerIndex) => {
+    if (index === 0) {
+      return "bottom-0 left-1/2 -translate-x-1/2 z-10";
+    }
+
+    if (index === bankerIndex) {
+      return BankerPosition;
+    }
+
+    let positionIndex = index;
+    if (index > bankerIndex) {
+      positionIndex = (index - 1) % playerPositions.length;
+    }
+
+    return playerPositions[positionIndex];
+  };
+
+  // Get the player bet position
+  const GetPositionBet = (index, bankerIndex) => {
+    if (index === 0) {
+      return " -top-40";
+    }
+
+    if (index === bankerIndex) {
+      return BetBankerPosition;
+    }
+
+    let positionIndex = index;
+    if (index > bankerIndex) {
+      positionIndex = (index - 1) % betPositions.length;
+    }
+
+    return betPositions[positionIndex];
+  };
+
+  const handleGoodButton = () =>{
+    setIsGood(true)
+  }
+
+  const position = GetPositionPlayer(index, isBankerIndex); // position player
+  const BetPosition = GetPositionBet(index, isBankerIndex); // position Bet
+  const isBanker = index === isBankerIndex; // check if the main plaeyr is the banker
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Card
+        className={` absolute flex items-center justify-center ${position} ${
+          isBanker ? "bg-black/65" : "bg-black/65"
+        } mb-4`}
+      >
+        {/* Start of Bet Amount */}
+        {bet ? (
+          <div
+            className={`absolute text-white ${BetPosition} bg-black/25 h-auto p-3 w-auto`}
+          >
+            <div className="w-auto flex flex-col justify-start items-start">
+              <div className="font-bold text-sm">Bet Amount</div>
+              <div className="flex flex-row justify-center items-center font-jaro font-bold text-xl">
+                <Image
+                  src="/image/GameCoin.svg"
+                  width={40}
+                  height={45}
+                  alt="Exit button"
+                  className="h-5 w-full"
+                />
+                {bet}
+              </div>
+            </div>
+          </div>
+        ) : (
+          ""
+        )}
+        {/* End of Bet Amound */}
+
+        <div className="relative">
+          <CardContent className="p-2">
+            {showCards && (
+              <div className="absolute -right-3 -top-3">
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className=" text-white h-auto relative"
+                >
+                  <Image
+                    src="/image/ScoreBackground.svg"
+                    width={40}
+                    height={45}
+                    alt="Exit button"
+                    className="h-10 w-full"
+                  />
+                  <div className="absolute z-20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2  font-extrabold text-[#FFF600] text-stroke-thin font-jaro text-3xl">
+                    {score}
+                  </div>
+                </motion.div>
+              </div>
+            )}
+            <Image
+              src="https://static.wikia.nocookie.net/hunterxhunter/images/3/3e/HxH2011_EP147_Gon_Portrait.png/revision/latest?cb=20230904181801"
+              width={40}
+              height={45}
+              alt="Exit button"
+              className="w-14 h-auto absolute -top-8 rounded-full -z-10"
+            />
+            <h3 className="text-xl font-bold mb-2 flex items-center text-white font-jaro mt-4">
+              {player}{" "}
+              {isBanker && (<div className="font-jaro text-lg ml-2  bg-gradient-to-b from-[#FFE100] to-[#C2AA9A] text-transparent bg-clip-text">
+              (Banker)
+            </div>)}
+            </h3>
+            <div className="relative">
+            <PlayerCard showCards={showCards} hand={hand}/>
+            <div className="text-white flex flex-row w-fullrounded-b-lg bg-black/60 p-1 font-jainiPurva text-2xl justify-center items-center">
+            <Image
+                  src="/image/GameCoin.svg"
+                  width={40}
+                  height={45}
+                  alt="Circle Icon"
+                  className="h-6 w-auto  "
+                />
+              {isPlayerCoin}
+              </div>
+            </div>
+            {canDraw &&  (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="absolute -top-20 flex flex-row w-auto  justify-start gap-1 -left-24"
+              >
+                <Button
+                  onClick={onDraw}
+                  disabled={gamePhase === "betting" || isGood}
+                  className={` bg-blue-600 rounded-full border-b-2 w-20 hover:bg-blue-800 ${gamePhase === "betting" ?  "opacity-65 cursor-not-allowed" : ""}`}
+                >
+                  Hirit
+                </Button>
+                <Button
+                  onClick={handleGoodButton}
+                  disabled={gamePhase === "betting" || isGood}
+                  className= {`bg-green-600 rounded-full border-b-2 w-20 hover:bg-green-800 ${gamePhase === "betting" ?  "opacity-65 cursor-not-allowed" : ""}`} 
+                >
+                  Good
+                </Button>
+                <Button
+                  disabled={gamePhase !== "betting"}
+                  className={`bg-yellow-600 rounded-full border-b-2 w-20 hover:bg-yellow-700 cursor-pointer ${gamePhase !== "betting" ?  "opacity-65 cursor-not-allowed" : ""}`} 
+                >
+                  Bet
+                </Button>
+                <Button
+                  disabled={gamePhase !== "betting"}
+                  className={`bg-yellow-600 rounded-full border-b-2 w-20 hover:bg-yellow-700 cursor-pointer ${gamePhase !== "betting" ?  "opacity-65 cursor-not-allowed" : ""}`} 
+                >
+                  All-in
+                </Button>
+              </motion.div>
+              
+            )}
+          </CardContent>
+        </div>
+      </Card>
+    </motion.div>
+  );
+};
+
+export default PlayerHand;
