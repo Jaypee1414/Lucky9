@@ -209,7 +209,7 @@ export default function Game() {
   );
 
   useEffect(() => {
-    const newSocket = io("http://localhost:5000");
+    const newSocket = io("https://lucky9.onrender.com");
     setSocket(newSocket);
 
     newSocket.on("connect", () => {

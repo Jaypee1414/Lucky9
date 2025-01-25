@@ -73,14 +73,15 @@ const PlayerHand = ({
 
     let positionIndex = index;
 
-    if(index === 0){
-      positionIndex = index + playerIndex ;
+    if(index === 0 ){
+      positionIndex = index + playerIndex  ;
     }
+
     if(index > bankerIndex) {
       positionIndex = index - 1 ; 
     }
 
-    return playerPositions[positionIndex % playerPositions.length];
+    return playerPositions[positionIndex];
   };
 
   // note Get the player bet position
@@ -107,6 +108,8 @@ const PlayerHand = ({
   const BetPosition = GetPositionBet(index, isBankerIndex); // position Bet
   const isBanker = index === isBankerIndex; // check if the main plaeyr is the banker
 
+
+  console.log("playerIndex", playerIndex);
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -180,7 +183,7 @@ const PlayerHand = ({
               )}
             </h3>
             <div className="relative">
-              { gamePhase === "dealCards" || gamePhase === "drawPhase" ? <PlayerCard showCards={showCards} hand={hand} /> : ""}
+              { gamePhase === "dealCards" || gamePhase === "drawPhase" || gamePhase === "results" ? <PlayerCard showCards={showCards} hand={hand} /> : ""}
               <div className="text-white flex flex-row w-fullrounded-b-lg bg-black/60 p-1 font-jainiPurva text-2xl justify-center items-center">
                 <Image
                   src="/image/GameCoin.svg"
