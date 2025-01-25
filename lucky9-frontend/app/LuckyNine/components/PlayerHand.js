@@ -116,13 +116,32 @@ const PlayerHand = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
+      {isBanker && socket !== currentPlayer && <div className=" absolute  left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/4 mt-10">
+        <Image
+          src="/image/Deck.svg"
+          width={40}
+          height={45}
+          alt="Card"
+          className="h-16 w-full z-10"
+        />
+      </div> }
+
+      {isBanker && socket === currentPlayer && <div className=" absolute  left-1/2 bottom-1/3 -translate-x-1/4 -translate-y-1/4 ">
+        <Image
+          src="/image/Deck.svg"
+          width={40}
+          height={45}
+          alt="Card"
+          className="h-16 w-full z-10"
+        />
+      </div> }
       <Card
         className={` absolute flex items-center justify-center ${position} ${
           isBanker ? "bg-black/65" : "bg-black/65"
         } mb-4`}
       >
         {/* Start of Bet Amount */}
-        {bet ? (
+        {/* {bet ? (
           <div
             className={`absolute text-white ${BetPosition} bg-black/25 h-auto p-3 w-auto`}
           >
@@ -142,7 +161,7 @@ const PlayerHand = ({
           </div>
         ) : (
           ""
-        )}
+        )} */}
         {/* End of Bet Amound */}
 
         <div className="relative">

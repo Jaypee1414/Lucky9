@@ -17,6 +17,7 @@ import PlayerHand from "../components/PlayerHand";
 import BankerSelection from "../components/BankerSelection";
 import GameSelection from "../components/GameSelection";
 import { useSearchParams, useRouter } from "next/navigation";
+import Image from "next/image";
 
 // Utility functions
 const createDeck = () => {
@@ -107,7 +108,8 @@ export default function Game() {
 
   // NOTE : Static player money
   const [isPlayerCoin, setIsPlayerCoin] = useState(40000);
-
+  const [checkPlayerCoin, setCheckPlayerCoin] = useState(false);
+  //note get the search params
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -209,7 +211,8 @@ export default function Game() {
   );
 
   useEffect(() => {
-    const newSocket = io("https://lucky9.onrender.com");
+    // const newSocket = io("https://lucky9.onrender.com");
+    const newSocket = io("http://localhost:5000");
     setSocket(newSocket);
 
     newSocket.on("connect", () => {
@@ -333,7 +336,7 @@ export default function Game() {
           //note 2000 is not final
           router.push(`/LuckyNine/Gamebet`);
         }
-      }, 5000); // 10 seconds
+      }, 10000); // note 10 seconds
     }
     return () => clearTimeout(timer);
   }, [gamePhase, isPlayerCoin, router]);
@@ -411,10 +414,9 @@ export default function Game() {
   const playerIndex = gameState?.players.findIndex((p) => p.id === socket.id); // note get player index
   const currentPlayer = gameState?.players.find((p) => p.id === socket.id); // note get the POV player
 
-  console.log("Check game state", gameState);
 
   return (
-    <div className=" bg-[url('/image/GameBackground.svg')] bg-cover bg-center bg-no-repeat w-auto h-screen">
+    <div className=" bg-[url('/image/GameBackground.svg')] bg-cover bg-center bg-no-repeat w-auto h-screen relative">
       {/* countdown */}
       <div className="w-screen h-screen absolute flex justify-center items-center pointer-events-none">
         <AnimatePresence>
@@ -588,7 +590,6 @@ export default function Game() {
           </div>
         </div>
       </div>
-
       <GameSelection
         isPlayerCoin={isPlayerCoin}
         setIsPlayerCoin={setIsPlayerCoin}
