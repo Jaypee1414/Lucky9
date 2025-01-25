@@ -75,7 +75,8 @@ const PlayerHand = ({
 
     if(index === 0){
       positionIndex = index + playerIndex ;
-    }else if(index > bankerIndex) {
+    }
+    if(index > bankerIndex) {
       positionIndex = index - 1 ; 
     }
 
@@ -179,7 +180,7 @@ const PlayerHand = ({
               )}
             </h3>
             <div className="relative">
-              <PlayerCard showCards={showCards} hand={hand} />
+              { gamePhase === "dealCards" || gamePhase === "drawPhase" ? <PlayerCard showCards={showCards} hand={hand} /> : ""}
               <div className="text-white flex flex-row w-fullrounded-b-lg bg-black/60 p-1 font-jainiPurva text-2xl justify-center items-center">
                 <Image
                   src="/image/GameCoin.svg"
