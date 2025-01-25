@@ -314,32 +314,29 @@ export default function Game() {
     return () => clearTimeout(timer);
   }, [gamePhase]);
 
-  // note check the if the is end after 5 seconds the automatic Play again
   useEffect(() => {
-    let timer;
+    let timer; // Declare a variable to hold the timeout reference
+
+    // Check if the game phase is "results"
     if (gamePhase === "results") {
       setShowResults(true);
-      timer = setTimeout(() => {
-        setShowResults(false);
-        PlayAgainSameBanker();
-      }, 5000);
-    }
-    return () => clearTimeout(timer);
-  }, [gamePhase]);
+      
+      const delayTime = isPlayerCoin > 2000 ? 5000 : 30000; 
 
-  useEffect(() => {
-    let timer;
-    if (gamePhase === "results") {
       timer = setTimeout(() => {
-        // note this is checking if the player coin is less to the min bet Amount
-        if (isPlayerCoin < 2000) {
-          //note 2000 is not final
+        if(isPlayerCoin < 2000){
           router.push(`/LuckyNine/Gamebet`);
+        }else{
+          setShowResults(false);
+          PlayAgainSameBanker();
         }
-      }, 10000); // note 10 seconds
+      }, delayTime); 
     }
+
+
     return () => clearTimeout(timer);
-  }, [gamePhase, isPlayerCoin, router]);
+}, [gamePhase, isPlayerCoin, router]);
+
 
   if (gamePhase === "dealCards") {
     if (isBet === 0) {
