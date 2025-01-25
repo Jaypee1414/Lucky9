@@ -74,10 +74,8 @@ const PlayerHand = ({
     let positionIndex = index;
 
     if(index === 0){
-      console.log("checking for player ",playerIndex)
       positionIndex = index + playerIndex ;
     }else if(index > bankerIndex) {
-      console.log("minus index",playerIndex)
       positionIndex = index - 1 ; 
     }
 
