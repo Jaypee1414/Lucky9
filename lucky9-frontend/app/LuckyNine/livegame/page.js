@@ -109,6 +109,7 @@ export default function Game() {
   // NOTE : Static player money
   const [isPlayerCoin, setIsPlayerCoin] = useState(40000);
   const [checkPlayerCoin, setCheckPlayerCoin] = useState(false);
+  
   //note get the search params
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -322,6 +323,10 @@ export default function Game() {
       setShowResults(true);
       
       const delayTime = isPlayerCoin > 2000 ? 5000 : 30000; 
+
+      if(isPlayerCoin < 2000){
+        setCheckPlayerCoin(true);
+      }
 
       timer = setTimeout(() => {
         if(isPlayerCoin < 2000){
@@ -587,6 +592,22 @@ export default function Game() {
           </div>
         </div>
       </div>
+      { checkPlayerCoin && <div className="absolute inset-0 flex items-center justify-center bg-black/50 bg-opacity-50 z-50">
+          <Card>
+            <CardContent className="p-6">
+              <h2 className="text-2xl font-bold mb-2">Out of Founds</h2>
+              <p>Deposit or Exit the room</p>
+              <div className=" space-y-2 flex flex-row">
+              <Button onClick={SelectQuitGame} className="w-full">
+                  Deposit
+                </Button>
+                <Button onClick={SelectQuitGame} className="w-full">
+                  Exit
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>}
       <GameSelection
         isPlayerCoin={isPlayerCoin}
         setIsPlayerCoin={setIsPlayerCoin}

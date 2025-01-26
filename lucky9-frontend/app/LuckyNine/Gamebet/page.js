@@ -40,7 +40,7 @@ const Page = () => {
       <main>
         <div className="w-full h-auto p-20 flex justify-center items-center flex-col gap-5 space-y-5">
           {/* text */}
-          <div className="flex gap-10 flex-row w-[900px] justify-between items-end ">
+          <div className="flex gap-10 flex-row w-[900px] justify-between items-center ">
             <Image
               src="/image/vipIcon.svg"
               width={40}
@@ -92,7 +92,7 @@ const Page = () => {
                     : ""
                 }`}
               />
-              <button className="w-44 ml-6 ">
+              <button className="w-44 ml-6">
                 <Image
                   onClick={handleButtonClickLive}
                   src="/image/gamebetQuickPlay.svg"
@@ -119,7 +119,7 @@ const Page = () => {
                     : ""
                 }`}
               />
-              <button className="w-44 ml-6 ">
+              <button className="w-44 ml-6">
                 <Image
                   onClick={handleButtonClickLive}
                   src="/image/gamebetQuickPlay.svg"
@@ -147,7 +147,7 @@ const Page = () => {
                     : ""
                 }`}
               />
-              <button className="w-44 ml-6 ">
+              <button className="w-44 ml-6">
                 <Image
                   onClick={handleButtonClickLive}
                   src="/image/gamebetQuickPlay.svg"
@@ -164,7 +164,7 @@ const Page = () => {
               width={40}
               height={45}
               alt="3 star bet"
-              className={`h-60 w-full z-10 slow-high-bounce`}
+              className={`h-44 w-full z-10 slow-high-bounce`}
             />
 
             <div>
@@ -183,7 +183,7 @@ const Page = () => {
                     : ""
                 }`}
               />
-              <button className="w-44 mr-6 ">
+              <button className="w-44 mr-6">
                 <Image
                   onClick={handleButtonClickLive}
                   src="/image/gamebetQuickPlay.svg"
@@ -211,22 +211,22 @@ const Page = () => {
                     : ""
                 }`}
               />
-              <button className="w-44 mr-6 ">
+              <button className="w-44 mr-6">
                 <Image
                   onClick={handleButtonClickLive}
                   src="/image/gamebetQuickPlay.svg"
                   width={40}
                   height={45}
                   alt="Quick Play Button"
-                  className="h-16 w-full z-10 animate-pulse cursor-pointer"
+                  className="h-16 w-full z-10 animate-pulse  cursor-pointer"
                 />
               </button>
             </div>
             <div>
               <Image
                 onClick={() => {
-                  handleClick(4);
-                  setBet(15000);
+                  handleClick(5);
+                  setBet(10000);
                 }}
                 src="/image/bet6.svg"
                 width={40}
@@ -238,14 +238,14 @@ const Page = () => {
                     : ""
                 }`}
               />
-              <button className="w-44 mr-6 ">
+              <button className="w-44 mr-6">
                 <Image
                   onClick={handleButtonClickLive}
                   src="/image/gamebetQuickPlay.svg"
                   width={40}
                   height={45}
                   alt="Quick Play Button"
-                  className="h-16 w-full z-10 animate-pulse cursor-pointer"
+                  className="h-16 w-full z-10  animate-pulse cursor-pointer"
                 />
               </button>
             </div>
