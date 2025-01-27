@@ -75,7 +75,7 @@ const Page = () => {
             />
           </div>
           {/* Bet */}
-          <div className="flex flex-row w-[1000px] justify-center items-end ">
+          <div className="flex flex-row w-[1000px] justify-center items-center ">
             <div>
               <Image
                 onClick={() => {

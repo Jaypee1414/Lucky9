@@ -8,6 +8,7 @@ import Image from "next/image";
 import PlayerCard from "@/app/components/PlayerHandCard";
 // Components
 const PlayerHand = ({
+  setPlayersCount,
   playerIndex,
   socket,
   currentPlayer,
@@ -15,7 +16,6 @@ const PlayerHand = ({
   isGood,
   setIsGood,
   gamePhase,
-  bet,
   index,
   player,
   hand,
@@ -108,8 +108,6 @@ const PlayerHand = ({
   const BetPosition = GetPositionBet(index, isBankerIndex); // position Bet
   const isBanker = index === isBankerIndex; // check if the main plaeyr is the banker
 
-
-  console.log("playerIndex", playerIndex);
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -126,7 +124,7 @@ const PlayerHand = ({
         />
       </div> }
 
-      {isBanker && socket === currentPlayer && <div className=" absolute  left-1/2 bottom-1/3 -translate-x-1/4 -translate-y-1/4 ">
+      {isBanker && socket === currentPlayer && <div className=" absolute  left-1/2 bottom-1/3 -translate-x-1/4 -translate-y-1/2 ">
         <Image
           src="/image/Deck.svg"
           width={40}

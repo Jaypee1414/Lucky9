@@ -79,7 +79,8 @@ io.on("connection", (socket) => {
     game.players.push({
       id: socket.id,
       name: playerName,
-      money: 40000
+      money: 40000,
+      hasBet: false,
     })
 
     socket.join(game.id)
@@ -159,7 +160,8 @@ function sanitizeGameState(game) {
     players: game.players.map((p) => ({
         money: p.money,
        id: p.id,
-       name: p.name
+       name: p.name,
+       hasBet: false,
     })),
     hands: game.hands,
     scores: game.scores,
