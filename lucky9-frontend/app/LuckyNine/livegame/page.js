@@ -449,8 +449,8 @@ useEffect(() => {
   const isBankerIndex = players.indexOf(banker); // note check banker place always in middle
   const currentPlayer = gameState?.players.find((p) => p.id === socket.id); // note get the POV player
 
-  console.log("playerIndex", playerIndex)
-  console.log("Game State", gameState)
+  console.log("Banker Index", currentPlayer?.name)
+  console.log("Banker ", banker)
   return (
     <div className=" bg-[url('/image/GameBackground.svg')] bg-cover bg-center bg-no-repeat w-auto h-screen relative">
       {/* countdown */}
@@ -637,7 +637,7 @@ useEffect(() => {
         isPlayerCoin={isPlayerCoin}
         setIsPlayerCoin={setIsPlayerCoin}
         value={isValue}
-        isBanker={players[0] === banker}
+        isBanker={currentPlayer?.name === banker}
         gamePhase={gamePhase}
         count={count}
         showBetMessage={showBetMessage}
