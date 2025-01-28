@@ -81,7 +81,7 @@ io.on("connection", (socket) => {
       name: playerName,
       money: 40000,
       hasBet: false,
-      banker: false,
+      isbanker: false,
     })
 
     socket.join(game.id)
@@ -97,6 +97,26 @@ io.on("connection", (socket) => {
     }
   })
 
+  // note that the player-bet event is emitted from the frontend
+  socket.on("player-bet", ({ gameId, playerId, playerBet }) => {
+    const game = games.get(gameId); // Get the game by ID
+    if (game) {
+      // Update the player's state
+      game.players = game.players.map((player) => {
+        if (player.id === playerId) {
+          return {
+            ...player,
+            money: player.money - playerBet, // Deduct the bet
+            hasBet: true,
+          };
+        }
+        return player;
+      });
+  
+      io.to(gameId).emit("update-game-state", { players: game.players });
+    }
+  });
+  
   socket.on("select-banker", ({ gameId, banker }) => {
     const game = games.get(gameId)
     if (game) {
@@ -163,7 +183,7 @@ function sanitizeGameState(game) {
        id: p.id,
        name: p.name,
        hasBet: false,
-       banker: false,
+       isBanker: false,
     })),
     hands: game.hands,
     scores: game.scores,

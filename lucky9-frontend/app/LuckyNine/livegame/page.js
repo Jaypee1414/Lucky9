@@ -110,7 +110,7 @@ export default function Game() {
   // NOTE : Static player money
   const [isPlayerCoin, setIsPlayerCoin] = useState(0);
   const [checkPlayerCoin, setCheckPlayerCoin] = useState(false);
-  
+
   //note get the search params
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -139,7 +139,6 @@ export default function Game() {
 
   const dealInitialCards = useCallback(
     (currentPlayers, initialDeck) => {
-
       // NOTE Reset deck state
       deckRef.current = {
         cards: [...initialDeck],
@@ -259,17 +258,24 @@ export default function Game() {
       setShowAllCards(false);
       setIsGood(false);
 
-      // Re-join with the same player name
       if (playerName) {
-        socket.emit("join-game", playerName);
+        newSocket.emit("join-game", playerName);
       }
+    });
+
+    // note update the server state including the players bet
+    newSocket.on("update-game-state", ({ players }) => {
+      setGameState((prevState) => ({
+        ...prevState,
+        players, 
+      }));
     });
 
     return () => {
       newSocket.disconnect();
     };
   }, []);
-  
+
   // NOTE : Get the player index and set a player coin
   const playerIndex = gameState?.players.findIndex((p) => p.id === socket.id); // note get player index
   useEffect(() => {
@@ -326,63 +332,67 @@ export default function Game() {
     // Check if the game phase is "results"
     if (gamePhase === "results") {
       setShowResults(true);
-      
-      const delayTime = isPlayerCoin > 2000 ? 5000 : 30000; 
 
-      if(isPlayerCoin < 2000){
+      const delayTime = isPlayerCoin > 2000 ? 5000 : 30000;
+
+      if (isPlayerCoin < 2000) {
         setCheckPlayerCoin(true);
       }
 
       timer = setTimeout(() => {
-        if(isPlayerCoin < 2000){
+        if (isPlayerCoin < 2000) {
           router.push(`/LuckyNine/Gamebet`);
-        }else{
+        } else {
           setShowResults(false);
-                  // note  Reset `hasBet` for all players to allow betting again
-        setGameState((prevState) => ({
-          ...prevState,
-          players: prevState.players.map((player) => ({
-            ...player,
-            hasBet: false, // Reset hasBet to false for all players
-          })),
-        }));
+          // note  Reset `hasBet` for all players to allow betting again
+          setGameState((prevState) => ({
+            ...prevState,
+            players: prevState.players.map((player) => ({
+              ...player,
+              hasBet: false, // Reset hasBet to false for all players
+            })),
+          }));
 
           PlayAgainSameBanker();
         }
-      }, delayTime); 
+      }, delayTime);
     }
-
 
     return () => clearTimeout(timer);
-}, [gamePhase, isPlayerCoin, router]);
+  }, [gamePhase, isPlayerCoin, router]);
 
+  // note deduct 2000 from non-betting players
+  useEffect(() => {
+    if (gamePhase === "dealCards") {
+      const updatedPlayers = gameState.players.map((player) => {
+        if (player.isBanker) {
+          return player;
+        }
 
-// note deduct 2000 from non-betting players
-useEffect(() => {
-  if (gamePhase === "dealCards") {
-    const updatedPlayers = gameState.players.map((player) => {
-      
-      if (!player.hasBet) { 
-        return {
-          ...player,
-          money: player.money - 2000, // note Deduct 2000 from non-betting players
-          hasBet: true, // note Set hasBet to true
-        };
+        if (!player.hasBet) {
+          return {
+            ...player,
+            money: player.money - 2000,
+          };
+        }
+
+        return player;
+      });
+
+      setGameState((prevState) => ({
+        ...prevState,
+        players: updatedPlayers,
+      }));
+
+      if (
+        playerIndex !== -1 &&
+        !gameState.players[playerIndex]?.isBanker &&
+        !gameState.players[playerIndex]?.hasBet
+      ) {
+        setIsPlayerCoin((prevCoin) => prevCoin - 2000);
       }
-      return player; // note Keep other players unchanged
-    });
-
-    setGameState((prevState) => ({
-      ...prevState,
-      players: updatedPlayers,
-    }));
-
-    // If the current player didn't bet, update their local coin state
-    if (playerIndex !== -1 && !gameState.players[playerIndex].hasBet) {
-      setIsPlayerCoin((prevCoin) => Number(prevCoin) - 2000);
     }
-  }
-}, [gamePhase, gameState, playerIndex]);
+  }, [gamePhase, gameState, playerIndex]);
 
   function PlayAgainSameBanker() {
     setGamePhase("countdown");
@@ -390,14 +400,6 @@ useEffect(() => {
     setHands({});
     setIsbet(0);
     setShowAllCards(false);
-    setIsGood(false);
-  }
-
-  function SelectNewBanker() {
-    setGamePhase("selectNewBanker");
-    setHands({});
-    setShowAllCards(false);
-    setIsbet(0);
     setIsGood(false);
   }
 
@@ -449,8 +451,8 @@ useEffect(() => {
   const isBankerIndex = players.indexOf(banker); // note check banker place always in middle
   const currentPlayer = gameState?.players.find((p) => p.id === socket.id); // note get the POV player
 
-  console.log("Banker Index", currentPlayer?.name)
-  console.log("Banker ", banker)
+  console.log("Banker Index", currentPlayer?.name);
+  console.log("Banker ", banker);
   return (
     <div className=" bg-[url('/image/GameBackground.svg')] bg-cover bg-center bg-no-repeat w-auto h-screen relative">
       {/* countdown */}
@@ -629,8 +631,10 @@ useEffect(() => {
       {/* 
         // todo make this a component
       */}
-      {checkPlayerCoin && <MessageModal SelectQuitGame={SelectQuitGame} /> }
+      {checkPlayerCoin && <MessageModal SelectQuitGame={SelectQuitGame} />}
       <GameSelection
+        gameId={gameId}
+        socket={socket}
         setGameState={setGameState}
         playerIndex={playerIndex}
         gameState={gameState}

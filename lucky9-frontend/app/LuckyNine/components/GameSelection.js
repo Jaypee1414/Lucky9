@@ -3,6 +3,8 @@ import Image from "next/image";
 import CustomizedSlider from "./SliderBet";
 
 function GameSelection({
+  gameId,
+  socket,
   setGameState,
   playerIndex,
   gameState,
@@ -14,31 +16,22 @@ function GameSelection({
 }) {
   // Handle betting logic
 
+
+  
   const handleBet = (playerBet) => {
     if (playerIndex === -1) return;
-
-    const updatedMoney =
-      gameState.players[playerIndex].money - Number(playerBet);
-
-    const updatedPlayers = gameState.players.map((player, index) => {
-      if (index === playerIndex) {
-        return { 
-          ...player, 
-          money: updatedMoney, 
-          hasBet: true,
-        };
-      }
-      return player;
-    });
-
-    setGameState((prevState) => ({
-      ...prevState,
-      players: updatedPlayers,
-    }));
-
+  
+    const updatedMoney = gameState.players[playerIndex].money - Number(playerBet);
+  
     setIsPlayerCoin(updatedMoney);
+    // Emit the bet action to the server
+    socket.emit("player-bet", {
+      gameId,
+      playerId: socket.id, // Identify the player making the bet
+      playerBet: Number(playerBet),
+    });
   };
-
+  
   return (
     <div className="absolute bottom-0 left-0">
       <div
