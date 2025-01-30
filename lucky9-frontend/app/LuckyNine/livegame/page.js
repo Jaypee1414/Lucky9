@@ -19,6 +19,7 @@ import GameSelection from "../components/GameSelection";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import MessageModal from "../components/MessageModal";
+import ChatSideBar from "@/app/components/ChatSideBar";
 
 // Utility functions
 const createDeck = () => {
@@ -99,6 +100,7 @@ export default function Game() {
   const [showPlayerHands, setShowPlayerHands] = useState(false);
   const [showBetMessage, setShowBetMessage] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   // Socket hooks
   const [socket, setSocket] = useState(null);
@@ -241,7 +243,7 @@ export default function Game() {
     return () => {
       newSocket.disconnect();
     };
-  }, [playerName]);
+  }, []);
 
   const playerIndex = gameState?.players.findIndex((p) => p.id === socket?.id);
   useEffect(() => {
@@ -414,6 +416,7 @@ export default function Game() {
     );
   }
 
+  const toggleChat = () => setIsChatOpen(!isChatOpen);
   const isBankerIndex = players.indexOf(banker);
   const currentPlayer = gameState?.players.find((p) => p.id === socket?.id);
 
@@ -600,7 +603,9 @@ export default function Game() {
         gamePhase={gamePhase}
         count={count}
         showBetMessage={showBetMessage}
+        toggleChat={toggleChat}
       />
+      <ChatSideBar  isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} gameId={gameId} socket={socket} playerIndex={playerIndex}/>
     </div>
   );
 }

@@ -3,6 +3,7 @@ import Image from "next/image";
 import CustomizedSlider from "./SliderBet";
 
 function GameSelection({
+  toggleChat,
   gameId,
   socket,
   setGameState,
@@ -155,7 +156,7 @@ function GameSelection({
                 Withdraw
               </div>
             </div>
-            <div className="h-auto w-auto relative flex">
+            <div className="h-auto w-auto relative flex cursor-pointer" onClick={toggleChat}>
               <Image
                 src="/image/ButtonGameBackground.svg"
                 width={40}
