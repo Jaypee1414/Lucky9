@@ -96,25 +96,23 @@ io.on("connection", (socket) => {
       io.to(game.id).emit("game-started", { gameId: game.id })
     }
   })
+
   socket.on("play-again", ({ gameId }) => {
     const game = games.get(gameId);
     if (game) {
       // Reset game state
       game.hands = {};
       game.scores = {};
-      game.deck = shuffleDeck(createDeck());
-  
-      // Reset player bets
+      game.deck = shuffleDeck(createDeck()),
+      
       game.players = game.players.map(player => ({
         ...player,
         hasBet: false
       }));
-  
+
       io.to(gameId).emit("play-again", { gameId });
-  
-      startCountdown(gameId);
     }
-  });  
+  });
 
   // note that the player-bet event is emitted from the frontend
   socket.on("player-bet", ({ gameId, playerId, playerBet }) => {

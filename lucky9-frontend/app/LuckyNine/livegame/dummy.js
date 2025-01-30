@@ -218,8 +218,7 @@ export default function Game() {
       setHands(newGameState.hands);
       setScores(newGameState.scores);
       setBanker(newGameState.banker);
-      setGamePhase(newGameState.gamePhase)
-      // setGamePhase("countdown");
+      setGamePhase("countdown");
     });
 
     newSocket.on("player-disconnected", (data) => {
@@ -288,14 +287,14 @@ export default function Game() {
         setIsPlayerCoin((prevCoin) => prevCoin - 2000);
       }
     }
-  }, [gamePhase, players, gameState?.players, playerIndex]);
+  }, [gamePhase, players, dealInitialCards, gameState?.players, playerIndex]);
 
   useEffect(() => {
     if (socket) {
       const handleCountdown = (value) => {
         setCount(value);
       };
-  
+
       const handleGamePhase = (phase) => {
         if (phase === "betting") {
           setGamePhase(phase);
@@ -306,17 +305,41 @@ export default function Game() {
           }, 5000);
         }
       };
-  
+
       socket.on("countdown", handleCountdown);
       socket.on("game-phase", handleGamePhase);
-  
+
       return () => {
         socket.off("countdown", handleCountdown);
         socket.off("game-phase", handleGamePhase);
       };
     }
   }, [socket]);
-  
+
+  useEffect(() => {
+    if (socket) {
+      const handlePlayAgain = ({ gameId }) => {
+        setCount(null);
+        setHands({});
+        setScores({});
+        setHasDrawn({});
+        setShowAllCards(false);
+        setShowPlayerHands(false);
+        setShowBetMessage(false);
+        setShowResults(false);
+        setIsbet(0);
+        setIsGood(false);
+
+        socket.emit("startCountdown", { gameId });
+      };
+
+      socket.on("play-again", handlePlayAgain);
+
+      return () => {
+        socket.off("play-again", handlePlayAgain);
+      };
+    }
+  }, []);
 
   useEffect(() => {
     let timer;
@@ -355,19 +378,7 @@ export default function Game() {
   }, [gamePhase, isPlayerCoin, router]);
 
   function PlayAgainSameBanker() {
-    if(socket && gameId) {
-      setCount(null);
-      setHands({});
-      setScores({});
-      setHasDrawn({});
-      setShowAllCards(false);
-      setShowPlayerHands(false);
-      setShowBetMessage(false);
-      setShowResults(false);
-      setIsbet(0);
-      setIsGood(false);
-      socket.emit("play-again", { gameId });
-    }
+    socket.emit("play-again", { gameId });
   }
 
   function SelectQuitGame() {

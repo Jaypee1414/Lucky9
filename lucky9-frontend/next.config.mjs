@@ -1,8 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    images: {
-        domains: ['static.wikia.nocookie.net'], // Allow this domain
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'static.wikia.nocookie.net',
+        port: '',
+        pathname: '/**',
       },
+    ],
+  },
 };
 
 export default nextConfig;

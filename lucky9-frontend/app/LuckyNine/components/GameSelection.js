@@ -1,4 +1,4 @@
-import { React, useEffect } from "react";
+import { React } from "react";
 import Image from "next/image";
 import CustomizedSlider from "./SliderBet";
 
@@ -16,8 +16,6 @@ function GameSelection({
 }) {
   // Handle betting logic
 
-
-  
   const handleBet = (playerBet) => {
     if (playerIndex === -1) return;
   
